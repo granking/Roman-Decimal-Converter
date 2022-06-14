@@ -4,14 +4,14 @@ export const convertSlice = createSlice({
   name: 'convert',
   initialState: {
     value: '',
-    romanNumeralInputError: false,
-    decimalNumberInputError: false,
+    error: false,
+    errorDecimal: false,
   },
   reducers: {
     romanToDecimal: (state, action) => {
       const roman = action.payload.toUpperCase();
       if (!/^M{0,3}(CM|CD|D?C{0,3})(XC|XL|L?X{0,3})(IX|IV|V?I{0,3})$/.test(roman)) {
-        state.romanNumeralInputError = true;
+        state.error = true;
         return
       }
 
@@ -26,7 +26,7 @@ export const convertSlice = createSlice({
       romanToDecimal.set('M',1000);
 
       let decimal = 0;
-      state.romanNumeralInputError = false;
+      state.error = false;
 
       for (let i = 0; i < roman.length; i++) {
         let initialValue = romanToDecimal.get(roman[i]);
@@ -45,12 +45,12 @@ export const convertSlice = createSlice({
     decimalToRoman: (state, action) => {
       let decimal = action.payload;
       if(!/^[0-9]+$/.test(decimal)){
-        state.decimalNumberInputError = true;
+        state.errorDecimal = true;
         return;
       }
 
       if (decimal >= 4000){
-        state.decimalNumberInputError = true;
+        state.errorDecimal = true;
         return;
       }
 
@@ -71,7 +71,7 @@ export const convertSlice = createSlice({
       decimalToRoman.set('I', 1);
 
       let roman = '';
-      state.decimalNumberInputError = false;
+      state.errorDecimal = false;
       decimalToRoman.forEach((item, key) => {
         let result = Math.floor(decimal / item);
         decimal -= result * item;
@@ -80,12 +80,12 @@ export const convertSlice = createSlice({
       state.value = roman;
     },
     resetErrors: (state) => {
-      state.romanNumeralInputError = false;
-      state.decimalNumberInputError = false;
+      state.error = false;
+      state.errorDecimal = false;
     },
   },
 })
 
-export const { romanToDecimal, decimalToRoman } = convertSlice.actions
+export const { romanToDecimal, decimalToRoman, resetErrors } = convertSlice.actions
 
 export default convertSlice.reducer
